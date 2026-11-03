@@ -1,0 +1,62 @@
+---
+// Phones only: a thumb-reach "Order" bar that slides up once the page's first Order
+// button (the hero's, on home) has scrolled away, or after 400px on other pages.
+import OrderLink from './OrderLink.astro';
+import { menu, settings } from '../lib/menu.mjs';
+import { formatPrice } from '../lib/format.mjs';
+const from = Math.min(...menu.filter((m) => m.unit === 'each').map((m) => m.price));
+---
+{settings.ordering_open && (
+  <div class="order-bar" data-order-bar>
+    <p><strong>Cookies from {formatPrice(from)}</strong><span>Campus pickup</span></p>
+    <OrderLink label="Order" size="small" />
+  </div>
+)}
+
+<style>
+  .order-bar { display: none; }
+  @media (max-width: 767px) {
+    .order-bar {
+      position: fixed;
+      left: 12px; right: 12px;
+      bottom: calc(12px + env(safe-area-inset-bottom));
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 8px 8px 8px 18px;
+      border-radius: var(--radius-pill);
+      background: var(--cocoa);
+      color: var(--cream);
+      box-shadow: 0 12px 30px -8px rgb(61 42 35 / 0.55);
+      translate: 0 calc(100% + 24px);
+      visibility: hidden;
+      transition: translate 320ms var(--ease-out), visibility 0s linear 320ms;
+    }
+    .order-bar[data-show] { translate: 0 0; visibility: visible; transition: translate 320ms var(--ease-out); }
+    .order-bar p { display: grid; line-height: 1.2; font-size: 0.95rem; }
+    .order-bar p span { font-size: 0.8rem; color: #d9c9b6; }
+    .order-bar :global(.btn) { --bg: var(--butter); --fg: var(--cocoa); min-width: 112px; }
+    .order-bar :global(.btn:hover) { --bg: #f1e1b5; }
+  }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-order-bar]');
+  const heroCta = document.getElementById('hero-order');
+  const footer = document.querySelector('footer');
+  if (bar) {
+    let ctaVisible = true;
+    let footerVisible = false;
+    const update = () => bar.toggleAttribute('data-show', !ctaVisible && !footerVisible);
+    if (heroCta) {
+      new IntersectionObserver(([e]) => { ctaVisible = e.isIntersecting || e.boundingClientRect.top > 0; update(); }).observe(heroCta);
+    } else {
+      const onScroll = () => { ctaVisible = window.scrollY < 400; update(); };
+      addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+    if (footer) new IntersectionObserver(([e]) => { footerVisible = e.isIntersecting; update(); }).observe(footer);
+  }
+</script>

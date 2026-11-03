@@ -1,0 +1,97 @@
+---
+import ProductCard from './ProductCard.astro';
+import { menu } from '../lib/menu.mjs';
+
+const filters = [
+  { key: 'all', label: 'All' },
+  { key: 'cookie', label: 'Cookies' },
+  { key: 'brownie', label: 'Brownies' },
+  { key: 'bites', label: 'Bites' },
+].filter((f) => f.key === 'all' || menu.some((m) => m.category === f.key));
+---
+<section id="menu" class="menu" aria-labelledby="menu-title">
+  <div class="container">
+    <div class="head">
+      <div class="section-head">
+        <p class="eyebrow">The menu</p>
+        <h2 id="menu-title" class="section-title">Baked fresh, every week</h2>
+        <p>Small batches, so favorites can sell out. Any cookie can go into a bundle.</p>
+      </div>
+      {filters.length > 2 && (
+        <div class="filters" role="group" aria-label="Filter the menu" data-filters hidden>
+          {filters.map((f, i) => (
+            <button type="button" class="pill" data-filter={f.key} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>
+          ))}
+        </div>
+      )}
+    </div>
+    <ul class="grid" role="list" data-grid>
+      {menu.map((item) => (
+        <li data-category={item.category}><ProductCard item={item} /></li>
+      ))}
+    </ul>
+    <p class="sr-status visually-hidden" aria-live="polite" data-filter-status></p>
+  </div>
+</section>
+
+<style>
+  .menu { padding-block: var(--space-2xl) var(--space-xl); }
+  /* No Move-In this week: the hero already supplies the space above. */
+  :global(.hero) + .menu { padding-top: var(--space-s); }
+  .head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-m); margin-bottom: var(--space-l); }
+  .head .section-head { margin-bottom: 0; }
+  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .pill {
+    min-height: 44px;
+    padding: 0 1.15rem;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--line-strong);
+    background: transparent;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--dur) var(--ease-out), color var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out);
+  }
+  .pill:hover { border-color: var(--cocoa); }
+  .pill[aria-pressed='true'] { background: var(--cocoa); border-color: var(--cocoa); color: var(--cream); }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 0.6rem + 1.2vw, 1.75rem);
+    padding: 0;
+  }
+  .grid > li { display: grid; }
+  .grid > li[hidden] { display: none; }
+  .grid > li:nth-child(3n + 2) :global(.tile-stamp) { rotate: 1.5deg; }
+  .grid > li:nth-child(3n) :global(.tile-stamp) { rotate: -0.8deg; }
+  @media (max-width: 999px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 559px) {
+    .grid { grid-template-columns: 1fr; gap: 0.75rem; }
+    .head { margin-bottom: var(--space-m); }
+    .filters { flex-wrap: nowrap; gap: 0.4rem; max-width: 100%; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); }
+    .filters::-webkit-scrollbar { display: none; }
+    .pill { flex: none; }
+    .pill { padding: 0 0.95rem; font-size: 0.95rem; }
+  }
+</style>
+
+<script>
+  const wrap = document.querySelector<HTMLElement>('[data-filters]');
+  if (wrap) {
+    wrap.hidden = false;
+    const items = document.querySelectorAll<HTMLElement>('[data-grid] > li');
+    const status = document.querySelector<HTMLElement>('[data-filter-status]')!;
+    wrap.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-filter]');
+      if (!btn) return;
+      const key = btn.dataset.filter!;
+      wrap.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      let shown = 0;
+      items.forEach((li) => {
+        const show = key === 'all' || li.dataset.category === key;
+        li.hidden = !show;
+        if (show) shown++;
+      });
+      status.textContent = `Showing ${shown} ${shown === 1 ? 'item' : 'items'}`;
+    });
+  }
+</script>

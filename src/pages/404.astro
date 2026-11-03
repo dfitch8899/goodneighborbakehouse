@@ -1,0 +1,44 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { withBase } from '../lib/format.mjs';
+import { menu } from '../lib/menu.mjs';
+
+const photo = menu.find((m) => m.photo);
+---
+<Base page="404" title="Page not found | Good Neighbor Bakehouse" description="That page has moved out of the neighborhood.">
+  <section class="lost">
+    <div class="container">
+      {photo && (
+        <div class="arch fill-frame">
+          <Picture src={photo.photo} alt="" widths={[200, 400]} sizes="180px" formats={['avif', 'webp']} quality={62} />
+        </div>
+      )}
+      <p class="eyebrow">Error 404</p>
+      <h1>This page moved out of the neighborhood.</h1>
+      <p>It may have been eaten. Let's get you back to the cookies.</p>
+      <div class="ctas">
+        <a class="btn" href={`${withBase('')}#menu`}>See this week's menu</a>
+        <a class="btn btn--ghost" href={withBase('faq/')}>Read the FAQ</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lost { padding-block: clamp(3rem, 2rem + 5vw, 6.5rem); text-align: center; }
+  .lost .container { display: grid; justify-items: center; gap: var(--space-s); max-width: 640px; }
+  .arch {
+    width: 180px;
+    aspect-ratio: 5 / 6;
+    margin-bottom: var(--space-s);
+    border-radius: 999px 999px 18px 18px;
+    overflow: hidden;
+    outline: 1.5px solid var(--cocoa);
+    outline-offset: 8px;
+    rotate: -4deg;
+  }
+  h1 { font-size: var(--step-4); }
+  p:not(.eyebrow) { color: var(--ink-muted); font-size: var(--step-1); }
+  .ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-xs); margin-top: var(--space-s); }
+</style>

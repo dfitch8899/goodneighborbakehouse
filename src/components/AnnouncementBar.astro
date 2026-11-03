@@ -1,0 +1,45 @@
+---
+import { settings } from '../lib/menu.mjs';
+const text = settings.ordering_open ? settings.announcement : settings.orders_closed_message || 'Orders are paused for now.';
+const url = settings.ordering_open ? settings.announcement_url : '';
+---
+{text && (
+  <div class="announce" role="region" aria-label="Announcement">
+    <p class="container">
+      <span class="dot" aria-hidden="true"></span>
+      {url ? <a href={url}>{text}</a> : text}
+    </p>
+  </div>
+)}
+
+<style>
+  .announce {
+    background: var(--cocoa);
+    color: var(--cream);
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+  .announce p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    min-height: 34px;
+    padding-block: 0.35rem;
+    text-align: center;
+    line-height: 1.35;
+  }
+  .announce a { color: var(--butter); }
+  @media (max-width: 559px) {
+    .announce { font-size: 0.84rem; }
+    .dot { display: none; }
+  }
+  .dot {
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--butter);
+    box-shadow: 0 0 0 4px rgb(233 212 159 / 0.18);
+  }
+</style>

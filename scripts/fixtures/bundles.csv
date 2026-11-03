@@ -1,0 +1,4 @@
+id,name,price,contents,badge,available,sort
+four-pack,Neighborly Four-Pack,12,4 cookies,,TRUE,1
+sweet-six,Sweet Six,15,6 cookies,Best value,TRUE,2
+welcome-basket,The Welcome Basket,19.5,"2 cookies, 2 brownies and two 4-piece bite packs",,TRUE,3

@@ -1,0 +1,18 @@
+key,value
+movein_item_id,smores
+movein_headline,Meet this week's move-in: S'mores
+movein_blurb,"Every so often a new flavor moves into the neighborhood. Right now it's toasted marshmallow, milk chocolate and graham, here for a limited time."
+movein_until,
+announcement,Now taking orders for this week. Pickup on campus.
+announcement_url,
+ordering_open,TRUE
+orders_closed_message,"We're taking a short break from orders. Follow us on Instagram to hear when we reopen."
+lead_time,Please order at least 2 days ahead.
+pickup_location,
+pickup_times,
+pickup_notes,We'll confirm your exact pickup spot and time in your confirmation email.
+order_form_url,https://forms.gle/4nqoQgoPxrKvFaLPA
+venmo_handle,mhall2006
+allergen_statement,"Everything is baked in a home kitchen. If you have a food allergy, message us before you order and we'll walk you through the ingredients."
+instagram,thegoodneighbor_bakehouse
+email,goodnbakehouse@gmail.com

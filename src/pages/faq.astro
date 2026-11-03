@@ -1,0 +1,161 @@
+---
+import Base from '../layouts/Base.astro';
+import OrderLink from '../components/OrderLink.astro';
+import { settings, venmoUrl, instagramUrl, emailUrl, pickupKnown } from '../lib/menu.mjs';
+import { withBase } from '../lib/format.mjs';
+
+const pickup = pickupKnown
+  ? [settings.pickup_location, settings.pickup_times].filter(Boolean).join(', ') + '.'
+  : 'Pickup is on the Ohio University campus. Your exact spot and time come in your confirmation email.';
+
+const groups = [
+  {
+    title: 'Ordering & changes',
+    items: [
+      {
+        q: 'How do I order?',
+        a: `Fill out our order form with the treats and flavors you'd like. ${settings.lead_time} We'll email you to confirm everything before you pay.`,
+      },
+      {
+        q: 'Is my order confirmed when I submit the form?',
+        a: 'Not yet. The form is a request. Your order is confirmed when we email you back with your total and pickup time.',
+      },
+      {
+        q: 'Can I mix flavors in a bundle?',
+        a: 'Yes. Any cookies can go into the Four-Pack or the Sweet Six. Just list your picks on the order form, like "2 Chocolate Chip, 2 Caramel Cone Crunch".',
+      },
+      {
+        q: 'Can I change or cancel my order?',
+        a: "Yes, just email us as soon as you can. The earlier we hear from you, the easier it is before we start baking.",
+      },
+      {
+        q: 'Do you take big or custom orders?',
+        a: `For parties, events or anything unusual, email us at ${settings.email} with the date and how many you need, and we'll let you know what we can do.`,
+      },
+    ],
+  },
+  {
+    title: 'Paying & pickup',
+    items: [
+      {
+        q: 'How do I pay?',
+        a: `By Venmo to @${settings.venmo_handle}, or with cash at pickup. Please wait for your confirmation email before you send a Venmo.`,
+        link: { href: venmoUrl, label: 'Open Venmo', external: true },
+      },
+      { q: 'Where do I pick up?', a: pickup },
+      {
+        q: 'What if I can\u2019t make my pickup time?',
+        a: "Let us know as soon as you can by email or Instagram and we'll find another time that works.",
+      },
+      { q: 'Do you deliver?', a: 'Not right now. All orders are picked up on campus.' },
+    ],
+  },
+  {
+    title: 'Ingredients & storage',
+    items: [
+      { q: 'Are your treats safe for allergies?', a: settings.allergen_statement },
+      { q: 'How should I store them?', a: 'Keep them in an airtight container at room temperature, and enjoy them within a few days.' },
+    ],
+  },
+];
+---
+<Base
+  page="faq"
+  title="FAQ & policies | Good Neighbor Bakehouse"
+  description="How ordering, payment and campus pickup work at Good Neighbor Bakehouse, plus allergy and storage info."
+>
+  <section class="faq-hero">
+    <div class="container narrow">
+      <p class="eyebrow">Questions</p>
+      <h1>Good to know</h1>
+      <p class="lede">Everything about ordering, paying and picking up. Still wondering about something? <a href={emailUrl}>Email us</a> or message us on <a href={instagramUrl} target="_blank" rel="noopener">Instagram<span class="visually-hidden"> (opens in a new tab)</span></a>.</p>
+    </div>
+  </section>
+
+  <div class="container narrow groups">
+    {groups.map((g) => (
+      <section class="group" aria-labelledby={`g-${g.title.toLowerCase().replace(/\W+/g, '-')}`}>
+        <h2 id={`g-${g.title.toLowerCase().replace(/\W+/g, '-')}`}>{g.title}</h2>
+        {g.items.map((it, i) => (
+          <details class="qa" open={g.title.startsWith('Ordering') && i === 0}>
+            <summary><span>{it.q}</span><span class="chev" aria-hidden="true"></span></summary>
+            <div class="answer">
+              <p>{it.a}</p>
+              {'link' in it && it.link && <p><a href={it.link.href} target="_blank" rel="noopener">{it.link.label}<span class="visually-hidden"> (opens in a new tab)</span></a></p>}
+            </div>
+          </details>
+        ))}
+      </section>
+    ))}
+
+    <aside class="cta-card">
+      <h2>Ready for something sweet?</h2>
+      <p>See this week's menu, then send us your order.</p>
+      <div class="ctas">
+        <OrderLink />
+        <a class="btn btn--ghost" href={`${withBase('')}#menu`}>See the menu</a>
+      </div>
+    </aside>
+  </div>
+</Base>
+
+<style>
+  .narrow { width: min(100% - 2 * var(--gutter), 780px); }
+  .faq-hero { padding-block: clamp(2.5rem, 2rem + 4vw, 5rem) var(--space-l); }
+  .faq-hero h1 { font-size: var(--step-5); margin-top: 0.4rem; }
+  .lede { margin-top: var(--space-s); font-size: var(--step-1); color: var(--ink-muted); line-height: 1.55; }
+  .groups { display: grid; gap: var(--space-xl); padding-bottom: var(--space-2xl); }
+  .group + .group { margin-top: 0.5rem; }
+  .group h2 { font-size: var(--step-3); margin-bottom: var(--space-s); }
+  .qa { border-bottom: 1px solid var(--line-strong); }
+  .qa:first-of-type { border-top: 1px solid var(--line-strong); }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 60px;
+    padding-block: 0.9rem;
+    list-style: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: var(--step-1);
+    line-height: 1.35;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover span:first-child { color: var(--accent); }
+  .chev {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--cocoa);
+    position: relative;
+    transition: rotate var(--dur) var(--ease-out), background-color var(--dur) var(--ease-out);
+  }
+  .chev::before, .chev::after {
+    content: '';
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 12px; height: 1.5px;
+    background: currentColor;
+    translate: -50% -50%;
+  }
+  .chev::after { rotate: 90deg; transition: rotate var(--dur) var(--ease-out); }
+  .qa[open] .chev { background: var(--cocoa); color: var(--cream); }
+  .qa[open] .chev::after { rotate: 0deg; }
+  .answer { padding: 0 3rem 1.25rem 0; color: var(--ink-muted); display: grid; gap: 0.6rem; }
+  .answer a { font-weight: 700; }
+  .cta-card {
+    padding: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
+    border-radius: var(--radius-l);
+    background: var(--butter);
+    box-shadow: 6px 6px 0 var(--cocoa);
+    border: 1.5px solid var(--cocoa);
+    display: grid;
+    gap: 0.6rem;
+  }
+  .cta-card h2 { font-size: var(--step-3); }
+  .ctas { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-xs); }
+  @media (max-width: 559px) { .answer { padding-right: 0; } }
+</style>

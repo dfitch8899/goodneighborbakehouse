@@ -1,0 +1,96 @@
+---
+import { Image } from 'astro:assets';
+import badge from '../assets/brand/logo-badge.png';
+import Icon from './Icon.astro';
+import { settings, orderUrl, venmoUrl, instagramUrl, emailUrl, pickupKnown } from '../lib/menu.mjs';
+import { withBase } from '../lib/format.mjs';
+
+const year = new Date().getFullYear();
+const pickup = pickupKnown
+  ? [settings.pickup_location, settings.pickup_times].filter(Boolean).join(' · ')
+  : 'On the Ohio University campus. Exact spot and time are in your confirmation email.';
+---
+<footer class="footer on-dark">
+  <div class="container top">
+    <div class="brand">
+      <Image src={badge} alt="Good Neighbor Bakehouse" loading="eager" width={132} height={Math.round(132 * badge.height / badge.width)} class="badge-logo" />
+      <p class="thanks">Thanks for being a good&nbsp;neighbor.</p>
+    </div>
+    <div class="col">
+      <h2>Order</h2>
+      <ul role="list">
+        {settings.ordering_open && <li><a href={orderUrl} target="_blank" rel="noopener"><Icon name="form" size={18} />Order form<span class="visually-hidden"> (opens in a new tab)</span></a></li>}
+        <li><a href={venmoUrl} target="_blank" rel="noopener"><Icon name="venmo" size={18} />Venmo @{settings.venmo_handle}<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+        <li><a href={withBase('faq/')}><Icon name="heart" size={18} />FAQ &amp; policies</a></li>
+      </ul>
+    </div>
+    <div class="col">
+      <h2>Pickup</h2>
+      <p class="pickup"><Icon name="pin" size={18} />{pickup}</p>
+      {settings.lead_time && <p class="pickup"><Icon name="clock" size={18} />{settings.lead_time}</p>}
+    </div>
+    <div class="col">
+      <h2>Say hi</h2>
+      <ul role="list">
+        <li><a href={instagramUrl} target="_blank" rel="noopener"><Icon name="instagram" size={18} /><span class="wrap">@{settings.instagram.replace(/_/g, '_\u200B')}</span><span class="visually-hidden"> on Instagram (opens in a new tab)</span></a></li>
+        <li><a href={emailUrl} class="email"><Icon name="mail" size={18} /><span class="wrap">{settings.email.replace('@', '\u200B@')}</span></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container bottom">
+    {settings.allergen_statement && <p class="allergy">{settings.allergen_statement}</p>}
+    <p>© {year} Good Neighbor Bakehouse · Home-baked in Athens, Ohio</p>
+  </div>
+</footer>
+
+<style>
+  .footer { background: var(--cocoa); color: var(--cream); padding-block: var(--space-xl) var(--space-m); }
+  .top {
+    display: grid;
+    grid-template-columns: 1.15fr 0.9fr 1.15fr 1.4fr;
+    gap: var(--space-l);
+    padding-bottom: var(--space-l);
+    border-bottom: 1px solid rgb(248 242 232 / 0.16);
+  }
+  .brand { display: grid; gap: var(--space-s); justify-items: start; align-content: start; }
+  .footer :global(.badge-logo) { width: 120px; height: auto; border-radius: 50%; background: var(--cream); padding: 4px; }
+  .thanks { font-family: var(--font-display); font-size: var(--step-2); line-height: 1.15; max-width: 14ch; }
+  h2 {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--butter);
+    margin-bottom: 0.9rem;
+  }
+  .col { min-width: 0; }
+  ul { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.15rem; padding: 0; }
+  .wrap { min-width: 0; }
+  a, .pickup {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    color: var(--cream);
+    line-height: 1.45;
+    overflow-wrap: break-word;
+    min-width: 0;
+  }
+  a { min-height: 44px; align-items: center; text-decoration: none; font-size: 0.97rem; }
+  a:hover { color: var(--butter); text-decoration: underline; }
+  .pickup { color: #e8dccb; font-size: 0.97rem; margin-bottom: 0.7rem; }
+  .footer :global(svg) { flex: none; margin-top: 0.15em; color: var(--butter); }
+  a :global(svg) { margin-top: 0; }
+  .bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding-top: var(--space-m);
+    font-size: 0.88rem;
+    color: #d9c9b6;
+  }
+  .allergy { flex-basis: 100%; max-width: 62rem; font-size: 0.85rem; line-height: 1.5; color: #d9c9b6; }
+  @media (max-width: 899px) { .top { grid-template-columns: repeat(2, minmax(0, 1fr)); } .brand { grid-column: 1 / -1; } }
+  @media (max-width: 559px) { .top { grid-template-columns: 1fr; } }
+</style>

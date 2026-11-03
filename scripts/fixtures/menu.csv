@@ -1,0 +1,7 @@
+id,name,price,unit,description,category,tag,available,sort,allergens,image
+chocolate-chip,Classic Chocolate Chip,3,each,"Golden edges, a soft middle and big chocolate chunks.",cookie,,TRUE,1,,
+caramel-cone-crunch,Caramel Cone Crunch,3.75,each,Our signature: buttery dough with caramel and crunchy waffle cone.,cookie,signature,TRUE,2,,
+smores,S'mores,3.75,each,"Toasted marshmallow, milk chocolate and graham.",cookie,limited,TRUE,3,,
+fudge-brownie,Classic Fudge Brownie,3.5,each,"Dense, fudgy and seriously chocolatey.",brownie,,TRUE,4,,
+brownie-bites,Brownie Bites,4,4-pack,Four bite-size brownies for sharing (or not).,bites,,TRUE,5,,
+banana-bread-bites,Banana Bread Bites,4,4-pack,Four cozy banana bread bites. Like a hug from home.,bites,,TRUE,6,,

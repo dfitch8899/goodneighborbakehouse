@@ -1,0 +1,29 @@
+name: QA
+
+# Pull requests: build, then check accessibility (axe) and Lighthouse scores.
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Install Playwright + Chromium
+        run: |
+          npm i -g playwright@1
+          npx playwright install --with-deps chromium
+          echo "NODE_PATH=$(npm root -g)" >> "$GITHUB_ENV"
+      - name: Accessibility (axe)
+        run: node scripts/qa/axe.mjs
+      - name: Keyboard focus walk
+        run: node scripts/qa/keyboard.mjs
+      - name: Lighthouse (>= 95)
+        run: CHROME_PATH=$(node -e "console.log(require('playwright').chromium.executablePath())") node scripts/qa/lighthouse.mjs

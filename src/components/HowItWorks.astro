@@ -1,0 +1,123 @@
+---
+import Icon from './Icon.astro';
+import { settings, orderUrl, venmoUrl, pickupKnown } from '../lib/menu.mjs';
+import { withBase } from '../lib/format.mjs';
+
+const pickup = pickupKnown
+  ? [settings.pickup_location, settings.pickup_times].filter(Boolean).join(' · ')
+  : settings.pickup_notes || "We'll confirm your pickup spot and time by email.";
+---
+<section id="how" class="how" aria-labelledby="how-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">How ordering works</p>
+      <h2 id="how-title" class="section-title">Four easy steps</h2>
+    </div>
+    <ol class="steps" role="list">
+      <li class="step">
+        <span class="num" aria-hidden="true">1</span>
+        <h3><span class="visually-hidden">Step 1: </span>Fill out the order form</h3>
+        <p>Pick your treats and flavors. {settings.lead_time}</p>
+        {settings.ordering_open && <a href={orderUrl} target="_blank" rel="noopener" class="link">Open the order form<span class="visually-hidden"> (opens in a new tab)</span> <Icon name="arrow" size={16} /></a>}
+      </li>
+      <li class="step">
+        <span class="num" aria-hidden="true">2</span>
+        <h3><span class="visually-hidden">Step 2: </span>Watch for your confirmation</h3>
+        <p>We'll email you to confirm your order, your total and your pickup time. <strong>Please wait for it before you pay.</strong></p>
+      </li>
+      <li class="step">
+        <span class="num" aria-hidden="true">3</span>
+        <h3><span class="visually-hidden">Step 3: </span>Pay your way</h3>
+        <p>Venmo <strong>@{settings.venmo_handle}</strong>, or bring cash to pickup.</p>
+        <a href={venmoUrl} target="_blank" rel="noopener" class="link">Pay on Venmo<span class="visually-hidden"> (opens in a new tab)</span> <Icon name="arrow" size={16} /></a>
+      </li>
+      <li class="step">
+        <span class="num" aria-hidden="true">4</span>
+        <h3><span class="visually-hidden">Step 4: </span>Pick up on campus</h3>
+        <p>{pickup}</p>
+        {pickupKnown && settings.pickup_notes && <p class="note">{settings.pickup_notes}</p>}
+      </li>
+    </ol>
+    <p class="more">Questions about allergies, pickup or changes? <a href={withBase('faq/')}>Read the FAQ</a>.</p>
+  </div>
+</section>
+
+<style>
+  .how { padding-block: var(--space-2xl); background: var(--sage-soft); }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1.25rem, 0.8rem + 1.2vw, 2rem);
+    padding: 0;
+    margin-top: var(--space-s);
+  }
+  /* Recipe index cards, taped to the board. */
+  .step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: 2.1rem 1.4rem 1.5rem;
+    background: var(--paper);
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgb(77 53 44 / 0.08), 0 8px 18px -8px rgb(77 53 44 / 0.22);
+    rotate: -0.6deg;
+  }
+  .step:nth-child(even) { rotate: 0.5deg; }
+  .step::before {
+    content: '';
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    width: 84px;
+    height: 22px;
+    translate: -50% 0;
+    rotate: -2deg;
+    background: rgb(233 212 159 / 0.8);
+    box-shadow: 0 1px 2px rgb(77 53 44 / 0.12);
+  }
+  .step:nth-child(even)::before { rotate: 3deg; }
+  .num {
+    position: absolute;
+    top: 0.55rem;
+    right: 1rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 2.6rem;
+    line-height: 1;
+    color: var(--accent);
+  }
+  h3 {
+    font-size: var(--step-1);
+    font-weight: 600;
+    line-height: 1.2;
+    text-wrap: pretty;
+    padding: 0 2.2rem 0.7rem 0;
+    margin-bottom: 0.2rem;
+    min-height: calc(2.4em + 0.7rem);
+    border-bottom: 1.5px solid rgb(150 85 61 / 0.3);
+  }
+  .step p { color: var(--ink-muted); font-size: 0.98rem; line-height: 1.6; }
+  .step p strong { color: var(--cocoa); }
+  .note { font-size: 0.9rem; }
+  .link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    margin-top: auto;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .link:hover { text-decoration: underline; }
+  .link :global(svg) { transition: transform var(--dur) var(--ease-out); }
+  .link:hover :global(svg) { transform: translateX(3px); }
+  .more { margin-top: var(--space-xl); color: var(--cocoa); font-size: var(--step-0); }
+  .more a { font-weight: 700; }
+
+  @media (max-width: 1060px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 2.25rem; } }
+  @media (max-width: 559px) {
+    .steps { grid-template-columns: 1fr; }
+    h3 { min-height: 0; }
+  }
+</style>

@@ -1,0 +1,118 @@
+---
+import OrderLink from './OrderLink.astro';
+import { bundles, minimumSavings } from '../lib/menu.mjs';
+import { formatPrice } from '../lib/format.mjs';
+
+// "6 cookies" style bundles get a per-cookie price; mixed ones show the saving.
+const perCookie = (b) => {
+  const m = b.contents.trim().match(/^(\d+)\s+cookies?$/i);
+  return m ? b.price / Number(m[1]) : 0;
+};
+const list = bundles.map((b) => ({ ...b, saving: minimumSavings(b), each: perCookie(b) }));
+const featuredId = (list.find((b) => b.badge) || list[Math.floor(list.length / 2)])?.id;
+---
+{list.length > 0 && (
+  <section id="bundles" class="bundles" aria-labelledby="bundles-title">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Bundles</p>
+        <h2 id="bundles-title" class="section-title">More to share</h2>
+        <p>Mix any flavors you like. Tell us your picks on the order form.</p>
+      </div>
+      <ul class="grid" role="list">
+        {list.map((b) => (
+          <li class:list={['slot', { featured: b.id === featuredId, 'is-soldout': !b.available }]}>
+            <article class="ticket">
+              <div class="top">
+                {b.badge && b.available && <span class="badge ribbon">{b.badge}</span>}
+                {!b.available && <span class="badge badge--soldout ribbon">Sold out this week</span>}
+                <h3 class="name">{b.name}</h3>
+                <p class="contents">{b.contents}</p>
+              </div>
+              <div class="perf" aria-hidden="true"></div>
+              <div class="bottom">
+                <p class="price"><span class="visually-hidden">Price: </span>{formatPrice(b.price)}</p>
+                <p class:list={['note', { win: b.saving > 0 || b.badge }]}>
+                  {b.each ? `${formatPrice(Math.round(b.each * 100) / 100)} a cookie` : ''}
+                  {b.each && b.saving > 0 ? ' · ' : ''}
+                  {b.saving > 0 ? `saves at least ${formatPrice(b.saving)}` : ''}
+                  {!b.each && !b.saving ? 'Mix and match any flavors' : ''}
+                </p>
+                {b.available && <OrderLink label="Choose flavors" variant={b.id === featuredId ? 'primary' : 'ghost'} size="small" />}
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+
+<style>
+  .bundles { padding-block: var(--space-xl) var(--space-2xl); }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 0.6rem + 1.4vw, 2rem);
+    padding: 0;
+    align-items: stretch;
+  }
+  /* The shadow lives on the slot so the ticket's notches can be masked out. */
+  .slot { display: grid; filter: drop-shadow(0 1px 1px rgb(77 53 44 / 0.12)) drop-shadow(0 10px 18px rgb(77 53 44 / 0.1)); }
+  .featured { filter: drop-shadow(0 1px 1px rgb(77 53 44 / 0.16)) drop-shadow(0 14px 22px rgb(77 53 44 / 0.2)); }
+  /* The tear line sits a fixed distance from the bottom (the price half is the same
+     height on every ticket), so long bundle descriptions can't run into it. */
+  .ticket {
+    --stub: 12.25rem;
+    --cut: calc(100% - var(--stub));
+    --notch: 15px;
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr var(--stub);
+    background: var(--paper);
+    border-radius: var(--radius-m);
+    -webkit-mask:
+      radial-gradient(circle var(--notch) at 0 var(--cut), #0000 98%, #000) left / 51% 100% no-repeat,
+      radial-gradient(circle var(--notch) at 100% var(--cut), #0000 98%, #000) right / 51% 100% no-repeat;
+    mask:
+      radial-gradient(circle var(--notch) at 0 var(--cut), #0000 98%, #000) left / 51% 100% no-repeat,
+      radial-gradient(circle var(--notch) at 100% var(--cut), #0000 98%, #000) right / 51% 100% no-repeat;
+  }
+  .featured .ticket { background: var(--butter); }
+  .top { display: grid; align-content: start; gap: 0.35rem; padding: 1.75rem 1.75rem 1.5rem; }
+  .perf {
+    position: absolute;
+    left: calc(var(--notch) + 10px);
+    right: calc(var(--notch) + 10px);
+    top: var(--cut);
+    border-top: 2px dashed var(--line-strong);
+  }
+  .featured .perf { border-color: rgb(77 53 44 / 0.35); }
+  .bottom { display: grid; gap: 0.35rem; align-content: start; padding: 1.4rem 1.75rem 1.5rem; }
+  .ribbon { justify-self: start; margin-bottom: 0.25rem; background: var(--cocoa); color: var(--cream); }
+  .name { font-size: var(--step-2); font-weight: 600; }
+  .contents { color: var(--ink-muted); line-height: 1.45; }
+  .featured .contents { color: var(--cocoa); }
+  .price {
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .note { font-size: 0.92rem; font-weight: 500; color: var(--ink-muted); margin-bottom: var(--space-xs); min-height: 1.4em; }
+  .note.win { color: var(--accent); font-weight: 700; }
+  .featured .note { color: var(--cocoa); }
+  .bottom :global(.btn) { justify-self: start; }
+  .is-soldout { opacity: 0.65; }
+
+  @media (max-width: 899px) {
+    .ticket { --stub: 10.75rem; }
+    .top { padding: 1.4rem 1.25rem 1.25rem; }
+    .bottom { padding: 1.2rem 1.25rem 1.25rem; }
+    .name { font-size: 1.3rem; }
+    .price { font-size: var(--step-3); }
+  }
+  @media (max-width: 899px) {
+    .grid { grid-template-columns: 1fr; gap: 1.5rem; max-width: 560px; }
+  }
+</style>

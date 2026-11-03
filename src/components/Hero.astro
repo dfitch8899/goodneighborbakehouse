@@ -1,0 +1,199 @@
+---
+import { Picture } from 'astro:assets';
+import OrderLink from './OrderLink.astro';
+import Icon from './Icon.astro';
+import { menu, settings } from '../lib/menu.mjs';
+import { formatPrice } from '../lib/format.mjs';
+
+// Hero photo: Chocolate Chip if it has one, else the first item with a photo.
+const heroItem = menu.find((m) => m.photo && m.id === 'chocolate-chip') || menu.find((m) => m.photo);
+const fromPrice = Math.min(...menu.filter((m) => m.unit === 'each').map((m) => m.price));
+const leadShort = settings.lead_time.replace(/^please\s+/i, '').replace(/\.$/, '').replace(/^./, (c) => c.toUpperCase());
+---
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container grid">
+    <div class="copy">
+      <p class="eyebrow rise" style="--d: 0">Small-batch sweets · Athens, Ohio</p>
+      <h1 id="hero-title" class="rise" style="--d: 1">
+        A little sweetness, <em>close&nbsp;to&nbsp;home.</em>
+      </h1>
+      <p class="lede rise" style="--d: 2">
+        <span class="long">Cookies, brownies and bites baked in small batches for Ohio University and the neighbors around it. </span>
+        <span class="short">Small-batch cookies and brownies for OU. </span>Order ahead, pick up on campus.
+      </p>
+      <div class="ctas rise" style="--d: 3">
+        <OrderLink id="hero-order" />
+        <a class="btn btn--ghost" href="#menu">See the menu</a>
+      </div>
+      <ul class="facts rise" style="--d: 4" role="list">
+        <li><Icon name="pin" size={20} />Campus pickup</li>
+        <li><Icon name="wallet" size={20} />Venmo or cash</li>
+        {leadShort && <li><Icon name="clock" size={20} />{leadShort}</li>}
+      </ul>
+    </div>
+
+    <div class="art rise" style="--d: 1">
+      <div class="arch fill-frame">
+        {heroItem && (
+          <Picture
+            src={heroItem.photo}
+            alt={heroItem.alt}
+            widths={[360, 500]}
+            sizes="(min-width: 720px) 400px, 92vw"
+            formats={['avif', 'webp']}
+            quality={64}
+            loading="eager"
+            fetchpriority="high"
+            class="photo"
+          />
+        )}
+      </div>
+      <p class="sticker" aria-hidden="true"><span class="long">Fresh from our oven to your neighborhood</span><span class="short">Baked this week</span></p>
+      <p class="stamp price-stamp"><span class="from">from</span>{formatPrice(fromPrice)}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { padding-block: clamp(2rem, 1.5rem + 4vw, 5rem) var(--space-2xl); overflow: clip; }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: center;
+    gap: clamp(2rem, 1rem + 5vw, 6rem);
+  }
+  .copy { display: grid; gap: var(--space-m); justify-items: start; }
+  h1 {
+    font-size: var(--step-5);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variation-settings: 'SOFT' 100, 'WONK' 0;
+  }
+  h1 em {
+    display: inline-block;
+    font-style: italic;
+    color: var(--accent);
+    position: relative;
+  }
+  /* Hand-drawn underline under the accent line. */
+  h1 em::after {
+    content: '';
+    position: absolute;
+    left: 2%; right: 4%;
+    bottom: -0.12em;
+    height: 0.2em;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 14' preserveAspectRatio='none'%3E%3Cpath d='M3 9c40-6 90-7 140-4s100 3 154-2' fill='none' stroke='%23E9D49F' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+    z-index: -1;
+  }
+  .lede { font-size: var(--step-1); line-height: 1.55; color: var(--ink-muted); max-width: 31rem; }
+  .lede .short { display: none; }
+  .ctas { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-2xs); }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    padding: 0;
+    margin-top: var(--space-2xs);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--cocoa);
+  }
+  .facts li { display: inline-flex; align-items: center; gap: 0.45rem; }
+  .facts :global(svg) { color: var(--accent); }
+
+  /* The photos are small phone shots, so the frame is capped to keep them crisp. */
+  .art { position: relative; justify-self: center; width: min(100%, 400px); }
+  .arch {
+    position: relative;
+    aspect-ratio: 5 / 6;
+    border-radius: 999px 999px var(--radius-l) var(--radius-l);
+    overflow: hidden;
+    background: var(--butter-soft);
+    box-shadow: var(--shadow-m);
+    outline: 1.5px solid var(--cocoa);
+    outline-offset: 10px;
+  }
+  .arch :global(img) { object-position: 50% 40%; }
+
+  .sticker {
+    position: absolute;
+    left: -16%;
+    bottom: 12%;
+    max-width: 15ch;
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--radius-m);
+    background: var(--butter);
+    color: var(--cocoa);
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-style: italic;
+    line-height: 1.15;
+    rotate: -4deg;
+    box-shadow: var(--shadow-sticker);
+  }
+  .price-stamp {
+    position: absolute;
+    right: -7%;
+    top: 16%;
+    --r: 4px;
+    display: grid;
+    gap: 2px;
+    padding: 0.9rem 1rem;
+    background: var(--paper);
+    font-size: 1.6rem;
+    rotate: 6deg;
+    filter: drop-shadow(0 6px 10px rgb(77 53 44 / 0.18));
+  }
+  .price-stamp .from {
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .sticker .short { display: none; }
+
+  /* One orchestrated entrance; nothing else on the page animates in. */
+  .rise { animation: rise 480ms var(--ease-out) both; animation-delay: calc(var(--d) * 50ms); }
+  @keyframes rise {
+    from { opacity: 0; translate: 0 14px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+
+  @media (max-width: 899px) {
+    .art { width: min(100%, 330px); }
+    .price-stamp { right: -3%; }
+    .sticker { left: -12%; max-width: 9ch; }
+    .sticker .long { display: none; }
+    .sticker .short { display: inline; }
+    .copy .eyebrow { letter-spacing: 0.11em; }
+  }
+  @media (max-width: 719px) {
+    .grid { grid-template-columns: 1fr; gap: var(--space-l); }
+    .art { width: min(84%, 360px); }
+  }
+
+  /* Phones: food first, then the headline and the button, all on the first screen. */
+  @media (max-width: 599px) {
+    .hero { padding-block: 1.25rem var(--space-xl); }
+    .grid { gap: 1.5rem; }
+    .art { order: -1; width: 100%; }
+    .arch {
+      aspect-ratio: 16 / 10;
+      max-height: 34svh;
+      width: 100%;
+      border-radius: 200px 200px 18px 18px / 160px 160px 18px 18px;
+      outline-offset: 6px;
+    }
+    .arch :global(img) { object-position: 50% 45%; }
+    .sticker { display: none; }
+    .price-stamp { right: 10px; top: auto; bottom: -14px; font-size: 1.25rem; padding: 0.7rem 0.8rem; }
+    .eyebrow, .facts { display: none; }
+    .copy { gap: 1rem; }
+    .lede .long { display: none; }
+    .lede .short { display: inline; }
+    .lede { font-size: 1.08rem; }
+    .ctas { display: grid; grid-template-columns: 1fr; width: 100%; margin-top: 0.25rem; }
+  }
+</style>

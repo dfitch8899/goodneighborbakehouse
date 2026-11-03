@@ -1,0 +1,73 @@
+---
+import '../styles/global.css';
+import frauncesUrl from '../assets/fonts/fraunces.woff2?url';
+import dmSansUrl from '../assets/fonts/dm-sans.woff2?url';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AnnouncementBar from '../components/AnnouncementBar.astro';
+import OrderBar from '../components/OrderBar.astro';
+import { withBase } from '../lib/format.mjs';
+import { settings, instagramUrl } from '../lib/menu.mjs';
+
+interface Props { title?: string; description?: string; page?: 'home' | 'faq' | '404' }
+const {
+  title = 'Good Neighbor Bakehouse | Small-batch cookies in Athens, Ohio',
+  description = 'Small-batch cookies, brownies and bites baked fresh in Athens, Ohio. Order ahead and pick up on the Ohio University campus.',
+  page = 'home',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(withBase('og.png'), Astro.site);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Bakery',
+  name: 'Good Neighbor Bakehouse',
+  url: new URL(withBase(''), Astro.site).href,
+  image: ogImage.href,
+  email: settings.email,
+  priceRange: '$',
+  servesCuisine: 'Baked goods',
+  address: { '@type': 'PostalAddress', addressLocality: 'Athens', addressRegion: 'OH', addressCountry: 'US' },
+  sameAs: [instagramUrl],
+};
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script is:inline>document.documentElement.classList.add('js')</script>
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical.href} />
+  <meta name="theme-color" content="#F8F2E8" />
+  <link rel="icon" href={withBase('favicon.svg')} type="image/svg+xml" />
+  <link rel="icon" href={withBase('favicon.png')} type="image/png" sizes="64x64" />
+  <link rel="apple-touch-icon" href={withBase('apple-touch-icon.png')} />
+  <link rel="preload" href={frauncesUrl} as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href={dmSansUrl} as="font" type="font/woff2" crossorigin />
+  <link rel="sitemap" href={withBase('sitemap-index.xml')} />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Good Neighbor Bakehouse" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical.href} />
+  <meta property="og:image" content={ogImage.href} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  {page === '404' && <meta name="robots" content="noindex" />}
+  {page === 'home' && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+</head>
+<body data-page={page}>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <AnnouncementBar />
+  <Header page={page} />
+  <main id="main" tabindex="-1">
+    <slot />
+  </main>
+  <Footer />
+  {page !== '404' && <OrderBar />}
+</body>
+</html>

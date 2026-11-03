@@ -1,0 +1,213 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/logo-house.png';
+import OrderLink from './OrderLink.astro';
+import { withBase } from '../lib/format.mjs';
+
+interface Props { page: string }
+const { page } = Astro.props;
+const home = withBase('');
+const links = [
+  { href: `${home}#menu`, label: 'Menu', section: 'menu' },
+  { href: `${home}#bundles`, label: 'Bundles', section: 'bundles' },
+  { href: `${home}#how`, label: 'How it works', section: 'how' },
+  { href: withBase('faq/'), label: 'FAQ', current: page === 'faq' },
+];
+---
+<div class="scroll-sentinel" aria-hidden="true"></div>
+<header class="site-header" data-header>
+  <div class="container bar">
+    <a class="brand" href={home} aria-label="Good Neighbor Bakehouse home">
+      <Image src={logo} alt="" width={220} height={Math.round(220 * logo.height / logo.width)} loading="eager" class="logo" />
+    </a>
+
+    <OrderLink size="small" label="Order" class="phone-order" arrow={false} />
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Site menu" data-menu-toggle>
+      <span class="burger" aria-hidden="true"><span></span><span></span></span>
+    </button>
+
+    <nav id="site-nav" class="nav" aria-label="Main" data-nav>
+      <ul role="list">
+        {links.map((l) => (
+          <li>
+            <a href={l.href} data-section={l.section} aria-current={l.current ? 'page' : undefined}>{l.label}</a>
+          </li>
+        ))}
+      </ul>
+      <OrderLink size="small" label="Order" class="nav-order" />
+    </nav>
+  </div>
+</header>
+
+<style>
+  .scroll-sentinel { position: absolute; top: 0; height: 1px; width: 1px; }
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(248 242 232 / 0.94);
+    backdrop-filter: saturate(1.2) blur(10px);
+    -webkit-backdrop-filter: saturate(1.2) blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+  }
+  .site-header[data-scrolled] {
+    border-bottom-color: var(--line);
+    box-shadow: 0 6px 20px -14px rgb(77 53 44 / 0.35);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    min-height: var(--header-h);
+    transition: min-height var(--dur) var(--ease-out);
+  }
+  .site-header[data-scrolled] .bar { min-height: 64px; }
+  .brand { display: block; margin-right: auto; border-radius: 8px; }
+  .logo {
+    height: 72px;
+    width: auto;
+    transition: height var(--dur) var(--ease-out);
+  }
+  .site-header[data-scrolled] .logo { height: 54px; }
+
+  .nav { display: flex; align-items: center; gap: var(--space-l); }
+  .nav ul { display: flex; gap: var(--space-m); padding: 0; }
+  .nav ul a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--cocoa);
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .nav ul a::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 8px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur) var(--ease-out);
+  }
+  .nav ul a:hover::after,
+  .nav ul a[data-active]::after,
+  .nav ul a[aria-current='page']::after { transform: scaleX(1); }
+
+  .menu-toggle, .bar :global(.phone-order) { display: none; }
+
+  @media (max-width: 820px) {
+    .bar { min-height: 72px; flex-wrap: wrap; gap: 0.6rem; }
+    .site-header[data-scrolled] .bar { min-height: 60px; }
+    .logo { height: 58px; }
+    .site-header[data-scrolled] .logo { height: 48px; }
+    .bar :global(.phone-order) { display: inline-flex; min-height: 44px; padding: 0 1.25rem; }
+    .menu-toggle {
+      display: inline-grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1.5px solid var(--cocoa);
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+    }
+    .menu-toggle[aria-expanded='true'] { background: var(--cocoa); color: var(--cream); }
+    .burger { display: grid; gap: 5px; width: 18px; }
+    .burger span {
+      display: block;
+      height: 2px;
+      border-radius: 2px;
+      background: currentColor;
+      transition: transform var(--dur) var(--ease-out);
+    }
+    .menu-toggle[aria-expanded='true'] .burger span:first-child { transform: translateY(3.5px) rotate(45deg); }
+    .menu-toggle[aria-expanded='true'] .burger span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+
+    .nav {
+      flex-basis: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-s);
+      padding: 0 0 var(--space-m);
+    }
+    :global(html.js) .nav:not([data-open]) { display: none; }
+    .nav ul { flex-direction: column; gap: 0; }
+    .nav ul a {
+      width: 100%;
+      min-height: 52px;
+      font-family: var(--font-display);
+      font-size: var(--step-2);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav ul a::after { display: none; }
+    .nav :global(.nav-order) { display: none; }
+  }
+  /* Short screens (phones in landscape): keep the sticky bar slim. */
+  @media (max-height: 520px) {
+    .bar, .site-header[data-scrolled] .bar { min-height: 56px; }
+    .logo, .site-header[data-scrolled] .logo { height: 42px; }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]')!;
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]')!;
+  const nav = document.querySelector<HTMLElement>('[data-nav]')!;
+
+  // Border + shadow once the page has scrolled.
+  const sentinel = document.querySelector('.scroll-sentinel')!;
+  new IntersectionObserver(([e]) => header.toggleAttribute('data-scrolled', !e.isIntersecting)).observe(sentinel);
+
+  // Keep keyboard focus out from under the sticky header and the phone order bar
+  // (WCAG 2.4.11). Browsers scroll a newly focused element only just into view.
+  document.addEventListener('focusin', (e) => {
+    const el = e.target as HTMLElement;
+    if (!el || el.closest('[data-header], [data-order-bar], .skip-link')) return;
+    const r = el.getBoundingClientRect();
+    const top = header.getBoundingClientRect().bottom + 12;
+    const bar = document.querySelector('[data-order-bar][data-show]')?.getBoundingClientRect();
+    const bottom = (bar && bar.height ? bar.top : innerHeight) - 12;
+    if (r.top < top) scrollBy({ top: r.top - top, behavior: 'instant' });
+    else if (r.bottom > bottom) scrollBy({ top: r.bottom - bottom, behavior: 'instant' });
+  });
+
+  // Mobile menu.
+  const setOpen = (open: boolean) => {
+    toggle.setAttribute('aria-expanded', String(open));
+    nav.toggleAttribute('data-open', open);
+  };
+  toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  nav.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) setOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      setOpen(false);
+      toggle.focus();
+    }
+  });
+  matchMedia('(min-width: 821px)').addEventListener('change', (m) => m.matches && setOpen(false));
+
+  // Highlight the section in view.
+  const links = new Map<string, HTMLElement>();
+  nav.querySelectorAll<HTMLElement>('a[data-section]').forEach((a) => links.set(a.dataset.section!, a));
+  const sections = [...links.keys()].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+  if (sections.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            links.forEach((a) => a.removeAttribute('data-active'));
+            links.get(e.target.id)?.setAttribute('data-active', '');
+          }
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((s) => io.observe(s));
+  }
+</script>

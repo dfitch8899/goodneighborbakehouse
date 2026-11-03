@@ -1,0 +1,17 @@
+---
+// The one place that knows whether ordering is open. Every "Order" CTA uses it.
+import Icon from './Icon.astro';
+import { settings, orderUrl } from '../lib/menu.mjs';
+
+interface Props { label?: string; variant?: 'primary' | 'ghost' | 'butter'; size?: 'small'; class?: string; arrow?: boolean; id?: string }
+const { label = 'Order this week', variant = 'primary', size, class: className, arrow = true, id } = Astro.props;
+const classes = ['btn', variant !== 'primary' && `btn--${variant}`, size && `btn--${size}`, className].filter(Boolean).join(' ');
+---
+{settings.ordering_open ? (
+  <a class={classes} href={orderUrl} target="_blank" rel="noopener" id={id} data-order-link>
+    {label}<span class="visually-hidden"> (opens the order form in a new tab)</span>
+    {arrow && <Icon name="arrow" size={18} />}
+  </a>
+) : (
+  <span class={classes} aria-disabled="true" id={id}>Orders reopen soon</span>
+)}

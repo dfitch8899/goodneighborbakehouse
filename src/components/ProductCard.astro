@@ -1,0 +1,193 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import { formatPrice } from '../lib/format.mjs';
+
+interface Props { item: any }
+const { item } = Astro.props;
+const tagLabel = { signature: 'Signature', limited: 'Limited', new: 'New' }[item.tag as string];
+const tileIcon = /bread|loaf/i.test(item.name) ? 'loaf' : item.category === 'brownie' ? 'brownie' : item.category === 'bites' ? 'bites' : 'cookie';
+const kind = { cookie: 'Cookie', brownie: 'Brownie', bites: 'Bites' }[item.category as string];
+const price = formatPrice(item.price);
+const cropStyle = item.crop ? `--crop-x: ${item.crop.x}; --crop-y: ${item.crop.y}; --zoom: ${item.crop.zoom}` : undefined;
+---
+<article
+  class:list={['card', `cat-${item.category}`, { 'is-soldout': !item.available, 'has-photo': item.photo }]}
+  data-category={item.category}
+  style={`--tint: ${item.tint}`}
+>
+  <div class="media fill-frame" style={cropStyle}>
+    {item.photo ? (
+      <Picture src={item.photo} alt={item.alt} widths={[240, 480]} sizes="(min-width: 1000px) 360px, (min-width: 560px) 45vw, 112px" formats={['avif', 'webp']} quality={62} class="photo" />
+    ) : (
+      <div class="tile" role="img" aria-label={`${item.name} (photo coming soon)`}>
+        <div class="tile-stamp" aria-hidden="true">
+          <Icon name={tileIcon} size={40} class="tile-icon" />
+          <span class="tile-name">{item.name}</span>
+          <span class="tile-kind">{kind}{item.unit !== 'each' && ` · ${item.unit}`}</span>
+        </div>
+      </div>
+    )}
+    <p class="stamp price-tag" aria-hidden="true">{price}{item.unit !== 'each' && <small>{item.unit}</small>}</p>
+    {!item.available ? <span class="badge badge--soldout flag">Sold out this week</span> : tagLabel && <span class:list={['badge', 'flag', `badge--${item.tag}`]}>{tagLabel}</span>}
+  </div>
+  <div class="body">
+    {!item.available ? <p class="label">Sold out this week</p> : tagLabel && <p class="label">{tagLabel}</p>}
+    <h3 class="name">{item.name}</h3>
+    <p class="price-line">
+      <span class="visually-hidden">Price: </span>{price}{item.unit !== 'each' && <span class="unit"> / {item.unit}</span>}
+    </p>
+    {item.description && <p class="desc">{item.description}</p>}
+    {item.allergens && <p class="allergens">Contains {item.allergens}</p>}
+  </div>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    overflow: hidden;
+    transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out);
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-m); border-color: var(--line-strong); }
+  .media { position: relative; aspect-ratio: 1; overflow: hidden; background: var(--tint); }
+  .media :global(img) {
+    object-position: var(--crop-x, 50%) var(--crop-y, 50%);
+    scale: var(--zoom, 1);
+    transform-origin: var(--crop-x, 50%) var(--crop-y, 50%);
+    transition: scale 220ms var(--ease-out);
+  }
+  .card:hover .media :global(img) { scale: calc(var(--zoom, 1) * 1.03); }
+
+  /* Typographic stand-in until a real photo arrives: a big perforated stamp. */
+  .tile {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    padding: 18% 13% 11%;
+    background:
+      radial-gradient(rgb(77 53 44 / 0.07) 1px, transparent 1.4px) 0 0 / 14px 14px,
+      var(--tint);
+  }
+  .tile-stamp {
+    --r: 6px;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 0.55rem;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    text-align: center;
+    background: var(--paper);
+    color: var(--cocoa);
+    -webkit-mask:
+      radial-gradient(var(--r), #0000 98%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)),
+      linear-gradient(#000 0 0) no-repeat 50% / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r));
+    mask:
+      radial-gradient(var(--r), #0000 98%, #000) round calc(-1.5 * var(--r)) calc(-1.5 * var(--r)) / calc(3 * var(--r)) calc(3 * var(--r)),
+      linear-gradient(#000 0 0) no-repeat 50% / calc(100% - 3 * var(--r)) calc(100% - 3 * var(--r));
+    rotate: -2deg;
+    box-shadow: inset 0 0 0 10px var(--paper), inset 0 0 0 11.5px rgb(77 53 44 / 0.25);
+  }
+  .tile :global(.tile-icon) { color: var(--accent); }
+  .tile-name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.15rem);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    text-wrap: balance;
+  }
+  .tile-kind {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .price-tag {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    --r: 3.5px;
+    display: grid;
+    justify-items: center;
+    gap: 1px;
+    padding: 0.6rem 0.75rem;
+    background: var(--paper);
+    font-size: 1.15rem;
+    rotate: 3deg;
+    filter: drop-shadow(0 3px 6px rgb(77 53 44 / 0.2));
+  }
+  .price-tag small {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .flag { position: absolute; left: 14px; top: 14px; }
+
+  .body { display: grid; gap: 0.35rem; padding: 1.1rem 1.25rem 1.35rem; align-content: start; }
+  .label { display: none; }
+  /* The stamp shows the price visually; this copy is for screen readers. */
+  .price-line { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .name { font-size: var(--step-1); font-weight: 600; line-height: 1.2; letter-spacing: -0.005em; }
+  .unit { font-weight: 500; font-size: 0.85rem; color: var(--ink-muted); }
+  .desc { color: var(--ink-muted); font-size: 0.97rem; line-height: 1.5; }
+  .allergens {
+    margin-top: 0.4rem;
+    padding-top: 0.6rem;
+    border-top: 1px dashed var(--line-strong);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .is-soldout .media :global(img), .is-soldout .tile-stamp { filter: grayscale(0.75); opacity: 0.55; }
+  .is-soldout .price-tag { opacity: 0.6; text-decoration: line-through; }
+  .is-soldout:hover { transform: none; box-shadow: none; }
+
+  /* Phones: compact rows, like a printed menu card. */
+  @media (max-width: 559px) {
+    .card { flex-direction: row; align-items: stretch; min-height: 116px; border-radius: var(--radius-m); }
+    .media { flex: none; width: 112px; aspect-ratio: auto; }
+    .tile { padding: 10px; }
+    .tile-stamp { --r: 4px; padding: 0.4rem; gap: 0.2rem; box-shadow: none; }
+    .tile :global(.tile-icon) { width: 34px; height: 34px; }
+    .tile-name, .tile-kind { display: none; }
+    .price-tag, .flag { display: none; }
+    .body { padding: 0.8rem 1rem; align-content: center; gap: 0.15rem; }
+    .label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .is-soldout .label { color: var(--ink-muted); }
+    .name { font-size: 1.12rem; }
+    .price-line { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; display: block; color: var(--accent); font-weight: 700; font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+    .is-soldout .price-line { color: var(--ink-muted); text-decoration: line-through; }
+    .desc {
+      font-size: 0.88rem;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card:hover { transform: none; }
+  }
+</style>

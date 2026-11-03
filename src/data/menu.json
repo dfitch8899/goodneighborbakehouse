@@ -1,0 +1,132 @@
+{
+  "updatedAt": "2026-11-03T18:07:05.493Z",
+  "source": "fixture",
+  "menu": [
+    {
+      "id": "chocolate-chip",
+      "name": "Classic Chocolate Chip",
+      "price": 3,
+      "unit": "each",
+      "description": "Golden edges, a soft middle and big chocolate chunks.",
+      "category": "cookie",
+      "tag": "",
+      "available": true,
+      "sort": 1,
+      "allergens": "",
+      "image": ""
+    },
+    {
+      "id": "caramel-cone-crunch",
+      "name": "Caramel Cone Crunch",
+      "price": 3.75,
+      "unit": "each",
+      "description": "Our signature: buttery dough with caramel and crunchy waffle cone.",
+      "category": "cookie",
+      "tag": "signature",
+      "available": true,
+      "sort": 2,
+      "allergens": "",
+      "image": ""
+    },
+    {
+      "id": "smores",
+      "name": "S'mores",
+      "price": 3.75,
+      "unit": "each",
+      "description": "Toasted marshmallow, milk chocolate and graham.",
+      "category": "cookie",
+      "tag": "limited",
+      "available": true,
+      "sort": 3,
+      "allergens": "",
+      "image": ""
+    },
+    {
+      "id": "fudge-brownie",
+      "name": "Classic Fudge Brownie",
+      "price": 3.5,
+      "unit": "each",
+      "description": "Dense, fudgy and seriously chocolatey.",
+      "category": "brownie",
+      "tag": "",
+      "available": true,
+      "sort": 4,
+      "allergens": "",
+      "image": ""
+    },
+    {
+      "id": "brownie-bites",
+      "name": "Brownie Bites",
+      "price": 4,
+      "unit": "4-pack",
+      "description": "Four bite-size brownies for sharing (or not).",
+      "category": "bites",
+      "tag": "",
+      "available": true,
+      "sort": 5,
+      "allergens": "",
+      "image": ""
+    },
+    {
+      "id": "banana-bread-bites",
+      "name": "Banana Bread Bites",
+      "price": 4,
+      "unit": "4-pack",
+      "description": "Four cozy banana bread bites. Like a hug from home.",
+      "category": "bites",
+      "tag": "",
+      "available": true,
+      "sort": 6,
+      "allergens": "",
+      "image": ""
+    }
+  ],
+  "bundles": [
+    {
+      "id": "four-pack",
+      "name": "Neighborly Four-Pack",
+      "price": 12,
+      "contents": "4 cookies",
+      "badge": "",
+      "available": true,
+      "sort": 1
+    },
+    {
+      "id": "sweet-six",
+      "name": "Sweet Six",
+      "price": 15,
+      "contents": "6 cookies",
+      "badge": "Best value",
+      "available": true,
+      "sort": 2
+    },
+    {
+      "id": "welcome-basket",
+      "name": "The Welcome Basket",
+      "price": 19.5,
+      "contents": "2 cookies, 2 brownies and two 4-piece bite packs",
+      "badge": "",
+      "available": true,
+      "sort": 3
+    }
+  ],
+  "settings": {
+    "movein_item_id": "smores",
+    "movein_headline": "Meet this week's move-in: S'mores",
+    "movein_blurb": "Every so often a new flavor moves into the neighborhood. Right now it's toasted marshmallow, milk chocolate and graham, here for a limited time.",
+    "movein_until": "",
+    "announcement": "Now taking orders for this week. Pickup on campus.",
+    "announcement_url": "",
+    "ordering_open": true,
+    "orders_closed_message": "We're taking a short break from orders. Follow us on Instagram to hear when we reopen.",
+    "lead_time": "Please order at least 2 days ahead.",
+    "pickup_location": "",
+    "pickup_times": "",
+    "pickup_notes": "We'll confirm your exact pickup spot and time in your confirmation email.",
+    "order_form_url": "https://forms.gle/4nqoQgoPxrKvFaLPA",
+    "venmo_handle": "mhall2006",
+    "allergen_statement": "Everything is baked in a home kitchen. If you have a food allergy, message us before you order and we'll walk you through the ingredients.",
+    "instagram": "thegoodneighbor_bakehouse",
+    "email": "goodnbakehouse@gmail.com"
+  }
+}

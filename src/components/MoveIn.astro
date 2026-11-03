@@ -1,0 +1,109 @@
+---
+import { Picture } from 'astro:assets';
+import OrderLink from './OrderLink.astro';
+import Icon from './Icon.astro';
+import { moveIn, settings } from '../lib/menu.mjs';
+import { formatPrice } from '../lib/format.mjs';
+
+const item = moveIn;
+const headline = settings.movein_headline || (item && `Meet this week's move-in: ${item.name}`);
+const blurb = settings.movein_blurb || item?.description;
+const tileIcon = item?.category === 'brownie' ? 'brownie' : item?.category === 'bites' ? 'bites' : 'cookie';
+---
+{item && (
+  <section id="move-in" class="move-in on-dark" aria-labelledby="move-in-title">
+    <Icon name="house" size={520} class="house-bg" />
+    <div class="container grid">
+      <div class="art">
+        <div class="ring fill-frame">
+          {item.photo ? (
+            <Picture src={item.photo} alt={item.alt} widths={[340, 484]} sizes="(min-width: 900px) 420px, 76vw" loading="eager" formats={['avif', 'webp']} quality={62} class="photo" />
+          ) : (
+            <div class="tile"><Icon name={tileIcon} size={120} /></div>
+          )}
+        </div>
+        <p class="tag stamp" aria-hidden="true">New<br />neighbor</p>
+      </div>
+
+      <div class="copy">
+        <p class="eyebrow">Neighborhood Move-In</p>
+        <h2 id="move-in-title" class="title">{headline}</h2>
+        {blurb && <p class="blurb">{blurb}</p>}
+        <div class="meta">
+          <p class="price">{formatPrice(item.price)} <span>{item.unit === 'each' ? 'each' : item.unit}</span></p>
+          {item.available ? (
+            <span class="badge badge--limited">{settings.movein_until ? `Here through ${settings.movein_until}` : 'Limited time'}</span>
+          ) : (
+            <span class="badge badge--soldout">Sold out this week</span>
+          )}
+        </div>
+        {item.available && <OrderLink variant="butter" label="Add it to your order" />}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .move-in {
+    position: relative;
+    overflow: clip;
+    background: var(--cocoa);
+    color: var(--cream);
+    padding-block: var(--space-2xl);
+  }
+  .move-in :global(.house-bg) {
+    position: absolute;
+    right: -64px;
+    top: -48px;
+    width: min(24vw, 320px);
+    height: auto;
+    color: var(--cream);
+    opacity: 0.06;
+    pointer-events: none;
+  }
+  .grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: clamp(2.5rem, 1rem + 6vw, 6.5rem);
+  }
+  .art { position: relative; justify-self: center; width: min(100%, 420px); }
+  .ring {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    outline: 2px dashed rgb(233 212 159 / 0.7);
+    outline-offset: 14px;
+    background: var(--cocoa-deep);
+  }
+  .ring :global(img) { object-position: 50% 45%; }
+  .tile { display: grid; place-items: center; height: 100%; color: var(--butter); }
+  .tag {
+    position: absolute;
+    left: -4%;
+    top: 4%;
+    --r: 4px;
+    padding: 1rem 1.05rem;
+    background: var(--butter);
+    font-size: 1.05rem;
+    text-align: center;
+    line-height: 1.05;
+    font-style: italic;
+    rotate: -8deg;
+    filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.25));
+  }
+  .copy { display: grid; gap: var(--space-m); justify-items: start; max-width: 34rem; }
+  .title { font-size: var(--step-4); }
+  .blurb { font-size: var(--step-1); line-height: 1.55; color: #efe4d4; }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-s); }
+  .price { font-family: var(--font-display); font-size: var(--step-3); line-height: 1; }
+  .price span { font-family: var(--font-body); font-size: 1rem; color: #d9c9b6; margin-left: 0.3rem; }
+
+  @media (max-width: 1199px) { .move-in :global(.house-bg) { display: none; } }
+  @media (max-width: 899px) {
+    .grid { grid-template-columns: 1fr; }
+    .art { width: min(78%, 340px); }
+
+  }
+</style>
