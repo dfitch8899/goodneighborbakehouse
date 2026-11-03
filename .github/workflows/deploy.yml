@@ -24,8 +24,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -63,9 +63,9 @@ jobs:
       - if: steps.gate.outputs.deploy == 'true'
         run: npm run build
       - if: steps.gate.outputs.deploy == 'true'
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - if: steps.gate.outputs.deploy == 'true'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: dist
     outputs:
@@ -80,4 +80,26 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+
+  # Load the live site after each deploy and fail loudly if a page or asset is missing.
+  smoke:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check live pages and assets
+        run: |
+          base="https://dfitch8899.github.io/goodneighborbakehouse"
+          sleep 20
+          fail=0
+          check() { code=$(curl -s -o /dev/null -w '%{http_code}' --retry 3 --retry-delay 10 "$1"); echo "$code $1"; [ "$code" = "$2" ] || fail=1; }
+          check "$base/" 200
+          check "$base/faq/" 200
+          check "$base/og.png" 200
+          check "$base/does-not-exist/" 404
+          curl -s "$base/" -o home.html
+          grep -q 'A little sweetness' home.html || { echo "home page content missing"; fail=1; }
+          for u in $(grep -oE '/goodneighborbakehouse/_astro/[^" )]+\.(woff2|avif|webp)' home.html | sort -u | head -12); do
+            check "https://dfitch8899.github.io$u" 200
+          done
+          exit $fail

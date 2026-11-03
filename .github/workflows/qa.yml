@@ -1,16 +1,19 @@
 name: QA
 
-# Pull requests: build, then check accessibility (axe) and Lighthouse scores.
+# Pull requests and pushes to main: build, then check accessibility (axe),
+# keyboard focus and Lighthouse scores.
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   qa:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
