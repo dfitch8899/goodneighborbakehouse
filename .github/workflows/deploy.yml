@@ -31,11 +31,12 @@ jobs:
           cache: npm
       - run: npm ci
 
+      # The sheet id only gives view access to the (public) menu, so it can live
+      # here; a repository variable SHEET_ID overrides it.
       - name: Pull the menu from the Google Sheet
-        if: vars.SHEET_ID != ''
         env:
           SHEET_SOURCE: live
-          SHEET_ID: ${{ vars.SHEET_ID }}
+          SHEET_ID: ${{ vars.SHEET_ID || '1FBxTn4KD7cl6dJHatqiGDM0f39d8enKicpn4xK-KODI' }}
         run: node scripts/sync-sheet.mjs
 
       - name: Save the menu snapshot

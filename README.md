@@ -17,9 +17,9 @@ wrong (a typo in a price, the sheet not shared, Google down), the sync keeps the
 `menu.json` and the build carries on, so a bad edit can't take the site down. Changed menus are
 committed back to the repo, so `menu.json` is always the latest good copy.
 
-Setup (once): share the sheet as **Anyone with the link: Viewer**, then add a repository
-variable `SHEET_ID` (Settings → Secrets and variables → Actions → Variables) with the id from
-the sheet's URL.
+Setup (once): share the sheet as **Anyone with the link: Viewer**. The sheet id is set in
+`deploy.yml`; to point at a different sheet, add a repository variable `SHEET_ID` (Settings →
+Secrets and variables → Actions → Variables) with the id from its URL.
 
 ## Develop
 
