@@ -1,11 +1,8 @@
 ---
 import Icon from './Icon.astro';
-import { settings, orderUrl, venmoUrl, pickupKnown } from '../lib/menu.mjs';
+import { settings, orderUrl, venmoUrl, pickupKnown, pickupText } from '../lib/menu.mjs';
 import { withBase } from '../lib/format.mjs';
 
-const pickup = pickupKnown
-  ? [settings.pickup_location, settings.pickup_times].filter(Boolean).join(' · ')
-  : settings.pickup_notes || "We'll confirm your pickup spot and time by email.";
 ---
 <section id="how" class="how" aria-labelledby="how-title">
   <div class="container">
@@ -34,7 +31,7 @@ const pickup = pickupKnown
       <li class="step">
         <span class="num" aria-hidden="true">4</span>
         <h3><span class="visually-hidden">Step 4: </span>Pick up on campus</h3>
-        <p>{pickup}</p>
+        <p>{pickupText}</p>
         {pickupKnown && settings.pickup_notes && <p class="note">{settings.pickup_notes}</p>}
       </li>
     </ol>

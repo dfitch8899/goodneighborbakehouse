@@ -2,13 +2,13 @@
 import { Image } from 'astro:assets';
 import badge from '../assets/brand/logo-badge.png';
 import Icon from './Icon.astro';
-import { settings, orderUrl, venmoUrl, instagramUrl, emailUrl, pickupKnown } from '../lib/menu.mjs';
+import { settings, orderUrl, venmoUrl, instagramUrl, emailUrl, pickupKnown, pickupText } from '../lib/menu.mjs';
 import { withBase } from '../lib/format.mjs';
 
 const year = new Date().getFullYear();
-const pickup = pickupKnown
-  ? [settings.pickup_location, settings.pickup_times].filter(Boolean).join(' · ')
-  : 'On the Ohio University campus. Exact spot and time are in your confirmation email.';
+const pickup = pickupKnown ? pickupText : `On the Ohio University campus. ${pickupText}`;
+// Optional line breaks for long handles; <wbr> (unlike a zero-width space) isn't copied.
+const breakAfter = (text, ch) => text.split(ch).map((part, i, all) => (i < all.length - 1 ? part + ch : part));
 ---
 <footer class="footer on-dark">
   <div class="container top">
@@ -32,8 +32,8 @@ const pickup = pickupKnown
     <div class="col">
       <h2>Say hi</h2>
       <ul role="list">
-        <li><a href={instagramUrl} target="_blank" rel="noopener"><Icon name="instagram" size={18} /><span class="wrap">@{settings.instagram.replace(/_/g, '_\u200B')}</span><span class="visually-hidden"> on Instagram (opens in a new tab)</span></a></li>
-        <li><a href={emailUrl} class="email"><Icon name="mail" size={18} /><span class="wrap">{settings.email.replace('@', '\u200B@')}</span></a></li>
+        <li><a href={instagramUrl} target="_blank" rel="noopener"><Icon name="instagram" size={18} /><span class="wrap">@{breakAfter(settings.instagram, '_').map((p, i) => <Fragment>{i > 0 && <wbr />}{p}</Fragment>)}</span><span class="visually-hidden"> on Instagram (opens in a new tab)</span></a></li>
+        <li><a href={emailUrl} class="email"><Icon name="mail" size={18} /><span class="wrap">{settings.email.split('@')[0]}<wbr />@{settings.email.split('@').slice(1).join('@')}</span></a></li>
       </ul>
     </div>
   </div>

@@ -8,5 +8,3 @@ export function withBase(path = '') {
   const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
   return base + String(path).replace(/^\//, '');
 }
-
-export const unitLabel = (unit) => (unit === '4-pack' ? '4-pack' : 'each');

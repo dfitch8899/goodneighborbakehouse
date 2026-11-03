@@ -2,12 +2,11 @@
 import { Picture } from 'astro:assets';
 import OrderLink from './OrderLink.astro';
 import Icon from './Icon.astro';
-import { menu, settings } from '../lib/menu.mjs';
+import { menu, settings, fromPrice } from '../lib/menu.mjs';
 import { formatPrice } from '../lib/format.mjs';
 
 // Hero photo: Chocolate Chip if it has one, else the first item with a photo.
 const heroItem = menu.find((m) => m.photo && m.id === 'chocolate-chip') || menu.find((m) => m.photo);
-const fromPrice = Math.min(...menu.filter((m) => m.unit === 'each').map((m) => m.price));
 const leadShort = settings.lead_time.replace(/^please\s+/i, '').replace(/\.$/, '').replace(/^./, (c) => c.toUpperCase());
 ---
 <section class="hero" aria-labelledby="hero-title">
@@ -49,7 +48,7 @@ const leadShort = settings.lead_time.replace(/^please\s+/i, '').replace(/\.$/, '
         )}
       </div>
       <p class="sticker" aria-hidden="true"><span class="long">Fresh from our oven to your neighborhood</span><span class="short">Baked this week</span></p>
-      <p class="stamp price-stamp"><span class="from">from</span>{formatPrice(fromPrice)}</p>
+      {fromPrice != null && <p class="stamp price-stamp"><span class="from">from</span>{formatPrice(fromPrice)}</p>}
     </div>
   </div>
 </section>

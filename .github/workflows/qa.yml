@@ -19,7 +19,8 @@ jobs:
       - name: Install Playwright + Chromium
         run: |
           npm i -g playwright@1
-          npx playwright install --with-deps chromium
+          # The global CLI, so the browser matches the package the scripts load.
+          "$(npm prefix -g)/bin/playwright" install --with-deps chromium
           echo "NODE_PATH=$(npm root -g)" >> "$GITHUB_ENV"
       - name: Accessibility (axe)
         run: node scripts/qa/axe.mjs

@@ -1,14 +1,10 @@
 ---
 import OrderLink from './OrderLink.astro';
-import { bundles, minimumSavings } from '../lib/menu.mjs';
+import { bundles, minimumSavings, pricePerCookie } from '../lib/menu.mjs';
 import { formatPrice } from '../lib/format.mjs';
 
-// "6 cookies" style bundles get a per-cookie price; mixed ones show the saving.
-const perCookie = (b) => {
-  const m = b.contents.trim().match(/^(\d+)\s+cookies?$/i);
-  return m ? b.price / Number(m[1]) : 0;
-};
-const list = bundles.map((b) => ({ ...b, saving: minimumSavings(b), each: perCookie(b) }));
+// Cookie-only bundles get a per-cookie price; mixed ones show the saving.
+const list = bundles.map((b) => ({ ...b, saving: minimumSavings(b), each: pricePerCookie(b) }));
 const featuredId = (list.find((b) => b.badge) || list[Math.floor(list.length / 2)])?.id;
 ---
 {list.length > 0 && (
@@ -33,7 +29,7 @@ const featuredId = (list.find((b) => b.badge) || list[Math.floor(list.length / 2
               <div class="bottom">
                 <p class="price"><span class="visually-hidden">Price: </span>{formatPrice(b.price)}</p>
                 <p class:list={['note', { win: b.saving > 0 || b.badge }]}>
-                  {b.each ? `${formatPrice(Math.round(b.each * 100) / 100)} a cookie` : ''}
+                  {b.each ? `${formatPrice(b.each)} a cookie` : ''}
                   {b.each && b.saving > 0 ? ' · ' : ''}
                   {b.saving > 0 ? `saves at least ${formatPrice(b.saving)}` : ''}
                   {!b.each && !b.saving ? 'Mix and match any flavors' : ''}

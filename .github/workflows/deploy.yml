@@ -39,23 +39,40 @@ jobs:
         run: node scripts/sync-sheet.mjs
 
       - name: Save the menu snapshot
+        id: snapshot
         run: |
-          if ! git diff --quiet -- src/data/menu.json; then
+          if git diff --quiet -- src/data/menu.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
             git config user.name "github-actions[bot]"
             git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
             git add src/data/menu.json
             git commit -m "Update menu from Google Sheet"
+            # main may have moved since checkout (e.g. a push during this run).
+            git pull --rebase origin "${GITHUB_REF_NAME}"
             git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - run: npm run build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      # Scheduled checks only rebuild when the sheet actually changed.
+      - name: Decide whether to deploy
+        id: gate
+        run: echo "deploy=${{ github.event_name != 'schedule' || steps.snapshot.outputs.changed == 'true' }}" >> "$GITHUB_OUTPUT"
+
+      - if: steps.gate.outputs.deploy == 'true'
+        run: npm run build
+      - if: steps.gate.outputs.deploy == 'true'
+        uses: actions/configure-pages@v5
+      - if: steps.gate.outputs.deploy == 'true'
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+    outputs:
+      deploy: ${{ steps.gate.outputs.deploy }}
 
   deploy:
     needs: build
+    if: needs.build.outputs.deploy == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

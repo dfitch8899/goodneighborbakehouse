@@ -1,6 +1,7 @@
 // Renders public/og.png (1200x630 link preview) with Playwright from brand assets.
 import { createRequire } from 'node:module';
 import { readFile } from 'node:fs/promises';
+import sharp from 'sharp';
 const { chromium } = createRequire(import.meta.url)('playwright');
 
 const b64 = async (p) => (await readFile(new URL(`../${p}`, import.meta.url))).toString('base64');
@@ -28,7 +29,7 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
 await page.setContent(html, { waitUntil: 'load' });
 await page.evaluate(() => document.fonts.ready);
-await page.screenshot({ path: 'public/og.png' });
-await createRequire(import.meta.url)('sharp')('public/og.png').png({ palette: true, quality: 90, compressionLevel: 9 }).toBuffer().then((b) => import('node:fs').then((fs) => fs.writeFileSync('public/og.png', b)));
+const shot = await page.screenshot();
+await sharp(shot).png({ palette: true, quality: 90, compressionLevel: 9 }).toFile('public/og.png');
 await browser.close();
 console.log('wrote public/og.png');
