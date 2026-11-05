@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-11-03T18:07:05.493Z",
-  "source": "fixture",
+  "updatedAt": "2026-11-05T01:32:11.975Z",
+  "source": "live",
   "menu": [
     {
       "id": "chocolate-chip",
@@ -49,7 +49,7 @@
       "description": "Dense, fudgy and seriously chocolatey.",
       "category": "brownie",
       "tag": "",
-      "available": true,
+      "available": false,
       "sort": 4,
       "allergens": "",
       "image": ""
