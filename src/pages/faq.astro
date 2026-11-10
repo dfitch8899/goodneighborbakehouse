@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import OrderLink from '../components/OrderLink.astro';
-import { settings, venmoUrl, instagramUrl, emailUrl, pickupKnown, pickupText, dropoffAvailable, dropoffText } from '../lib/menu.mjs';
+import { settings, venmoUrl, instagramUrl, emailUrl, pickupKnown, pickupText, dropoffAvailable, dropoffFee } from '../lib/menu.mjs';
 import { withBase } from '../lib/format.mjs';
 
 const pickup = pickupKnown ? `${pickupText}.` : `Pickup is on the Ohio University campus. ${pickupText}`;
@@ -48,7 +48,7 @@ const groups = [
       {
         q: 'Do you deliver?',
         a: dropoffAvailable
-          ? `Yes. ${dropoffText} We'll confirm the drop-off spot, time and total in your confirmation email.`
+          ? `Yes. Besides campus pickup, we can drop your order off for ${dropoffFee ? `a ${dropoffFee} fee` : 'a small extra fee'}. Just ask when you order, and we'll confirm the drop-off spot, time and total in your confirmation email.`
           : 'Not right now. All orders are picked up on campus.',
       },
     ],

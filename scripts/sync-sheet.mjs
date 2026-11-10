@@ -98,6 +98,7 @@ async function syncPhotos(items) {
       const res = await fetch(`https://drive.google.com/uc?export=download&id=${id}`, { redirect: 'follow', signal: AbortSignal.timeout(30000) });
       const type = res.headers.get('content-type') || '';
       if (!res.ok || !type.startsWith('image/')) throw new Error(`got ${res.status} ${type.split(';')[0]}; is the photo shared as "Anyone with the link"?`);
+      if (/hei[cf]/i.test(type)) throw new Error('it is an iPhone HEIC photo; save or export it as JPEG first');
       const jpg = await sharp(Buffer.from(await res.arrayBuffer()))
         .rotate()
         .resize({ width: 2000, height: 2000, fit: 'inside', withoutEnlargement: true })

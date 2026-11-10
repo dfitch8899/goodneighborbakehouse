@@ -1,4 +1,5 @@
 import data from '../data/menu.json';
+import { formatPrice } from './format.mjs';
 
 // Product photos live in src/assets/products/<id>.jpg (or the sheet's "image" column).
 const photos = import.meta.glob('../assets/products/*.{jpg,jpeg,png,webp}', { eager: true, import: 'default' });
@@ -7,7 +8,9 @@ function photoFor(item) {
   // A Drive link in the sheet is downloaded by the sync as <id>.jpg.
   const name = /^https?:\/\//i.test(item.image) ? '' : item.image;
   const wanted = (name || item.id).toLowerCase().replace(/\.(jpe?g|png|webp)$/, '');
-  const hit = Object.entries(photos).find(([path]) => path.split('/').pop().replace(/\.\w+$/, '').toLowerCase() === wanted);
+  const matches = Object.entries(photos).filter(([path]) => path.split('/').pop().replace(/\.\w+$/, '').toLowerCase() === wanted);
+  // The sync writes <id>.jpg, so a downloaded photo wins over an older file with the same name.
+  const hit = matches.find(([path]) => path.endsWith('.jpg')) || matches[0];
   return hit ? hit[1] : null;
 }
 
@@ -91,7 +94,9 @@ export const pickupKnown = Boolean(settings.pickup_location || settings.pickup_t
 
 // Paid drop-off, alongside campus pickup.
 export const dropoffAvailable = settings.dropoff_available !== false;
-const fee = settings.dropoff_fee ? (/^\d/.test(settings.dropoff_fee) ? `$${settings.dropoff_fee}` : settings.dropoff_fee) : '';
+const feeNumber = Number(String(settings.dropoff_fee).replace(/[$,\s]/g, ''));
+const fee = !settings.dropoff_fee ? '' : feeNumber > 0 ? formatPrice(feeNumber) : settings.dropoff_fee;
+export const dropoffFee = fee;
 export const dropoffText =
   settings.dropoff_notes ||
   `Prefer drop-off? We can bring your order to you for ${fee ? `a ${fee} fee` : 'a small extra fee'}. Just ask when you order.`;
