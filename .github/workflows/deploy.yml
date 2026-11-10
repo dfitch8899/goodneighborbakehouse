@@ -39,15 +39,15 @@ jobs:
           SHEET_ID: ${{ vars.SHEET_ID || '1FBxTn4KD7cl6dJHatqiGDM0f39d8enKicpn4xK-KODI' }}
         run: node scripts/sync-sheet.mjs
 
-      - name: Save the menu snapshot
+      - name: Save the menu snapshot (and any new photos)
         id: snapshot
         run: |
-          if git diff --quiet -- src/data/menu.json; then
+          if git diff --quiet -- src/data/menu.json && [ -z "$(git status --porcelain -- src/assets/products)" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
-            git add src/data/menu.json
+            git add src/data/menu.json src/assets/products
             git commit -m "Update menu from Google Sheet"
             # main may have moved since checkout (e.g. a push during this run).
             git pull --rebase origin "${GITHUB_REF_NAME}"

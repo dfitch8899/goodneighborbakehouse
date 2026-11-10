@@ -62,14 +62,14 @@ const links = [
     min-height: var(--header-h);
     transition: min-height var(--dur) var(--ease-out);
   }
-  .site-header[data-scrolled] .bar { min-height: 64px; }
+  .site-header[data-scrolled] .bar { min-height: 76px; }
   .brand { display: block; margin-right: auto; border-radius: 8px; }
   .logo {
-    height: 72px;
+    height: 86px;
     width: auto;
     transition: height var(--dur) var(--ease-out);
   }
-  .site-header[data-scrolled] .logo { height: 54px; }
+  .site-header[data-scrolled] .logo { height: 62px; }
 
   .nav { display: flex; align-items: center; gap: var(--space-l); }
   .nav ul { display: flex; gap: var(--space-m); padding: 0; }
@@ -100,10 +100,10 @@ const links = [
   .menu-toggle, .bar :global(.phone-order) { display: none; }
 
   @media (max-width: 820px) {
-    .bar { min-height: 72px; flex-wrap: wrap; gap: 0.6rem; }
+    .bar { min-height: 78px; flex-wrap: wrap; gap: 0.6rem; }
     .site-header[data-scrolled] .bar { min-height: 60px; }
-    .logo { height: 58px; }
-    .site-header[data-scrolled] .logo { height: 48px; }
+    .logo { height: 64px; }
+    .site-header[data-scrolled] .logo { height: 52px; }
     .bar :global(.phone-order) { display: inline-flex; min-height: 44px; padding: 0 1.25rem; }
     .menu-toggle {
       display: inline-grid;

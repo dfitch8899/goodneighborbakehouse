@@ -86,7 +86,7 @@
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --dur: 200ms;
-  --header-h: 88px;
+  --header-h: 104px;
   --gutter: clamp(1rem, 0.6rem + 2vw, 2rem);
   --container: 1180px;
 }

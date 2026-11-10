@@ -1,6 +1,5 @@
 ---
 import { Picture } from 'astro:assets';
-import OrderLink from './OrderLink.astro';
 import Icon from './Icon.astro';
 import { moveIn, settings } from '../lib/menu.mjs';
 import { formatPrice } from '../lib/format.mjs';
@@ -37,7 +36,6 @@ const tileIcon = item?.category === 'brownie' ? 'brownie' : item?.category === '
             <span class="badge badge--soldout">Sold out this week</span>
           )}
         </div>
-        {item.available && <OrderLink variant="butter" label="Add it to your order" />}
       </div>
     </div>
   </section>

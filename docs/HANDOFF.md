@@ -24,12 +24,23 @@ press **Run workflow** (GitHub → Actions → Deploy site), and it's live in ab
 | Label something | `menu` → `tag`: `signature`, `limited` or `new`. |
 | Change the order on the page | `menu` → `sort`, smallest first. |
 | Edit a bundle | `bundles` tab. `badge` (like `Best value`) highlights it. |
+| Change the order form link | `settings` → `order_form_url`. Every Order button uses it. |
+| Set the drop-off fee | `settings` → add a row `dropoff_fee` with the amount, like `2` (shows "a $2 fee"). Optional row `dropoff_notes` replaces the whole drop-off sentence. Add `dropoff_available` = `FALSE` to turn drop-off off. Without these rows the site says drop-off is "a small extra fee". |
+| Remove an item for good | Delete its row on the `menu` tab. (For a week or two, `available` = `FALSE` is better: people still see it's on the menu.) |
 
 ## Photos
 
-Send photos to Devin and say which item they're for. The best ones follow
-[PHOTO-BRIEF.md](PHOTO-BRIEF.md). Until an item has a photo, the site shows a designed
-"stamp" with its name, so nothing looks broken.
+Don't paste pictures into the sheet: pictures float over the cells, so they can't stay
+attached to an item. Instead, put a **link** in the item's `image` cell:
+
+1. Upload the photo to Google Drive.
+2. Right-click it → **Share** → General access: **Anyone with the link** (Viewer).
+3. **Copy link** and paste it into that item's `image` cell on the `menu` tab.
+
+On the next update the website downloads it, turns it the right way up and sizes it. To change
+a photo, paste a new link. Leave the cell blank to keep the current photo. Until an item has a
+photo, the site shows a designed "stamp" with its name, so nothing looks broken. Tips for great
+photos: [PHOTO-BRIEF.md](PHOTO-BRIEF.md).
 
 ## If something looks wrong
 

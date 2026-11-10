@@ -11,8 +11,11 @@ lead_time,Please order at least 2 days ahead.
 pickup_location,
 pickup_times,
 pickup_notes,We'll confirm your exact pickup spot and time in your confirmation email.
-order_form_url,https://forms.gle/4nqoQgoPxrKvFaLPA
+order_form_url,https://docs.google.com/forms/d/e/1FAIpQLSfanV29SwLYnmqO3Tr1gvVjZBUdx8szZlfTBDQ8HACYoW6jew/viewform?usp=header
 venmo_handle,mhall2006
 allergen_statement,"Everything is baked in a home kitchen. If you have a food allergy, message us before you order and we'll walk you through the ingredients."
 instagram,thegoodneighbor_bakehouse
 email,goodnbakehouse@gmail.com
+dropoff_available,TRUE
+dropoff_fee,
+dropoff_notes,

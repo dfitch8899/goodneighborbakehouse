@@ -27,7 +27,8 @@ export const MenuItem = z.object({
   available: bool,
   sort,
   allergens: text(200),
-  image: text(80),
+  // A photo file name in src/assets/products, or a Google Drive share link the sync downloads.
+  image: text(500),
 });
 
 export const Bundle = z.object({
@@ -58,6 +59,10 @@ export const Settings = z.object({
   allergen_statement: text(400),
   instagram: text(40),
   email: z.string().email(),
+  // Optional rows: the site works before they're added to the sheet.
+  dropoff_available: z.preprocess((v) => (v === undefined || String(v).trim() === '' ? true : v), bool),
+  dropoff_fee: text(40),
+  dropoff_notes: text(240),
 });
 
 export const MenuData = z

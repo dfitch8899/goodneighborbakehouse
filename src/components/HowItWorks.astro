@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { settings, orderUrl, venmoUrl, pickupKnown, pickupText } from '../lib/menu.mjs';
+import { settings, orderUrl, venmoUrl, pickupKnown, pickupText, dropoffAvailable, dropoffText } from '../lib/menu.mjs';
 import { withBase } from '../lib/format.mjs';
 
 ---
@@ -25,17 +25,18 @@ import { withBase } from '../lib/format.mjs';
       <li class="step">
         <span class="num" aria-hidden="true">3</span>
         <h3><span class="visually-hidden">Step 3: </span>Pay your way</h3>
-        <p>Venmo <strong>@{settings.venmo_handle}</strong>, or bring cash to pickup.</p>
+        <p>Venmo <strong>@{settings.venmo_handle}</strong>, or pay cash when you get your order.</p>
         <a href={venmoUrl} target="_blank" rel="noopener" class="link">Pay on Venmo<span class="visually-hidden"> (opens in a new tab)</span> <Icon name="arrow" size={16} /></a>
       </li>
       <li class="step">
         <span class="num" aria-hidden="true">4</span>
-        <h3><span class="visually-hidden">Step 4: </span>Pick up on campus</h3>
+        <h3><span class="visually-hidden">Step 4: </span>{dropoffAvailable ? 'Pick up or get it dropped off' : 'Pick up on campus'}</h3>
         <p>{pickupText}</p>
         {pickupKnown && settings.pickup_notes && <p class="note">{settings.pickup_notes}</p>}
+        {dropoffAvailable && <p class="note">{dropoffText}</p>}
       </li>
     </ol>
-    <p class="more">Questions about allergies, pickup or changes? <a href={withBase('faq/')}>Read the FAQ</a>.</p>
+    <p class="more">Questions about allergies, pickup, drop-off or changes? <a href={withBase('faq/')}>Read the FAQ</a>.</p>
   </div>
 </section>
 

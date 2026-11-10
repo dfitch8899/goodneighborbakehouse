@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import OrderLink from '../components/OrderLink.astro';
-import { settings, venmoUrl, instagramUrl, emailUrl, pickupKnown, pickupText } from '../lib/menu.mjs';
+import { settings, venmoUrl, instagramUrl, emailUrl, pickupKnown, pickupText, dropoffAvailable, dropoffText } from '../lib/menu.mjs';
 import { withBase } from '../lib/format.mjs';
 
 const pickup = pickupKnown ? `${pickupText}.` : `Pickup is on the Ohio University campus. ${pickupText}`;
@@ -33,11 +33,11 @@ const groups = [
     ],
   },
   {
-    title: 'Paying & pickup',
+    title: dropoffAvailable ? 'Paying, pickup & drop-off' : 'Paying & pickup',
     items: [
       {
         q: 'How do I pay?',
-        a: `By Venmo to @${settings.venmo_handle}, or with cash at pickup. Please wait for your confirmation email before you send a Venmo.`,
+        a: `By Venmo to @${settings.venmo_handle}, or with cash when you get your order. Please wait for your confirmation email before you send a Venmo.`,
         link: { href: venmoUrl, label: 'Open Venmo', external: true },
       },
       { q: 'Where do I pick up?', a: pickup },
@@ -45,7 +45,12 @@ const groups = [
         q: 'What if I can\u2019t make my pickup time?',
         a: "Let us know as soon as you can by email or Instagram and we'll find another time that works.",
       },
-      { q: 'Do you deliver?', a: 'Not right now. All orders are picked up on campus.' },
+      {
+        q: 'Do you deliver?',
+        a: dropoffAvailable
+          ? `Yes. ${dropoffText} We'll confirm the drop-off spot, time and total in your confirmation email.`
+          : 'Not right now. All orders are picked up on campus.',
+      },
     ],
   },
   {
@@ -60,7 +65,7 @@ const groups = [
 <Base
   page="faq"
   title="FAQ & policies | Good Neighbor Bakehouse"
-  description="How ordering, payment and campus pickup work at Good Neighbor Bakehouse, plus allergy and storage info."
+  description="How ordering, payment, campus pickup and drop-off work at Good Neighbor Bakehouse, plus allergy and storage info."
 >
   <section class="faq-hero">
     <div class="container narrow">

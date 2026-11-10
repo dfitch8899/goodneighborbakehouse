@@ -2,13 +2,13 @@
 // Phones only: a thumb-reach "Order" bar that slides up once the page's first Order
 // button (the hero's, on home) has scrolled away, or after 400px on other pages.
 import OrderLink from './OrderLink.astro';
-import { settings, cookiesFromPrice, fromPrice } from '../lib/menu.mjs';
+import { settings, cookiesFromPrice, fromPrice, fulfillmentShort } from '../lib/menu.mjs';
 import { formatPrice } from '../lib/format.mjs';
 const teaser = cookiesFromPrice != null ? `Cookies from ${formatPrice(cookiesFromPrice)}` : fromPrice != null ? `Treats from ${formatPrice(fromPrice)}` : 'Small-batch sweets';
 ---
 {settings.ordering_open && (
   <div class="order-bar" data-order-bar>
-    <p><strong>{teaser}</strong><span>Campus pickup</span></p>
+    <p><strong>{teaser}</strong><span>{fulfillmentShort}</span></p>
     <OrderLink label="Order" size="small" />
   </div>
 )}

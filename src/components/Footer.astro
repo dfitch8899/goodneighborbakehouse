@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import badge from '../assets/brand/logo-badge.png';
 import Icon from './Icon.astro';
-import { settings, orderUrl, venmoUrl, instagramUrl, emailUrl, pickupKnown, pickupText } from '../lib/menu.mjs';
+import { settings, orderUrl, venmoUrl, instagramUrl, emailUrl, pickupKnown, pickupText, dropoffAvailable, dropoffText } from '../lib/menu.mjs';
 import { withBase } from '../lib/format.mjs';
 
 const year = new Date().getFullYear();
@@ -25,8 +25,9 @@ const breakAfter = (text, ch) => text.split(ch).map((part, i, all) => (i < all.l
       </ul>
     </div>
     <div class="col">
-      <h2>Pickup</h2>
+      <h2>{dropoffAvailable ? 'Pickup & drop-off' : 'Pickup'}</h2>
       <p class="pickup"><Icon name="pin" size={18} />{pickup}</p>
+      {dropoffAvailable && <p class="pickup"><Icon name="bag" size={18} />{dropoffText}</p>}
       {settings.lead_time && <p class="pickup"><Icon name="clock" size={18} />{settings.lead_time}</p>}
     </div>
     <div class="col">

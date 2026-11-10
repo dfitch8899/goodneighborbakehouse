@@ -4,7 +4,9 @@ import data from '../data/menu.json';
 const photos = import.meta.glob('../assets/products/*.{jpg,jpeg,png,webp}', { eager: true, import: 'default' });
 
 function photoFor(item) {
-  const wanted = (item.image || item.id).toLowerCase().replace(/\.(jpe?g|png|webp)$/, '');
+  // A Drive link in the sheet is downloaded by the sync as <id>.jpg.
+  const name = /^https?:\/\//i.test(item.image) ? '' : item.image;
+  const wanted = (name || item.id).toLowerCase().replace(/\.(jpe?g|png|webp)$/, '');
   const hit = Object.entries(photos).find(([path]) => path.split('/').pop().replace(/\.\w+$/, '').toLowerCase() === wanted);
   return hit ? hit[1] : null;
 }
@@ -86,6 +88,14 @@ export const venmoUrl = `https://venmo.com/u/${settings.venmo_handle}`;
 export const instagramUrl = `https://www.instagram.com/${settings.instagram}/`;
 export const emailUrl = `mailto:${settings.email}`;
 export const pickupKnown = Boolean(settings.pickup_location || settings.pickup_times);
+
+// Paid drop-off, alongside campus pickup.
+export const dropoffAvailable = settings.dropoff_available !== false;
+const fee = settings.dropoff_fee ? (/^\d/.test(settings.dropoff_fee) ? `$${settings.dropoff_fee}` : settings.dropoff_fee) : '';
+export const dropoffText =
+  settings.dropoff_notes ||
+  `Prefer drop-off? We can bring your order to you for ${fee ? `a ${fee} fee` : 'a small extra fee'}. Just ask when you order.`;
+export const fulfillmentShort = dropoffAvailable ? 'Pickup or drop-off' : 'Campus pickup';
 
 // One place for the pickup sentence: "Spot · Times", or the "we'll email you" fallback.
 export const pickupText = pickupKnown

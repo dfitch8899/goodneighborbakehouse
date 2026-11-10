@@ -2,7 +2,7 @@
 import { Picture } from 'astro:assets';
 import OrderLink from './OrderLink.astro';
 import Icon from './Icon.astro';
-import { menu, settings, fromPrice } from '../lib/menu.mjs';
+import { menu, settings, fromPrice, dropoffAvailable, fulfillmentShort } from '../lib/menu.mjs';
 import { formatPrice } from '../lib/format.mjs';
 
 // Hero photo: Chocolate Chip if it has one, else the first item with a photo.
@@ -18,14 +18,14 @@ const leadShort = settings.lead_time.replace(/^please\s+/i, '').replace(/\.$/, '
       </h1>
       <p class="lede rise" style="--d: 2">
         <span class="long">Cookies, brownies and bites baked in small batches for Ohio University and the neighbors around it. </span>
-        <span class="short">Small-batch cookies and brownies for OU. </span>Order ahead, pick up on campus.
+        <span class="short">Small-batch cookies and brownies for OU. </span>{dropoffAvailable ? 'Order ahead, then pick up on campus or have it dropped off.' : 'Order ahead, pick up on campus.'}
       </p>
       <div class="ctas rise" style="--d: 3">
         <OrderLink id="hero-order" />
         <a class="btn btn--ghost" href="#menu">See the menu</a>
       </div>
       <ul class="facts rise" style="--d: 4" role="list">
-        <li><Icon name="pin" size={20} />Campus pickup</li>
+        <li><Icon name="pin" size={20} />{fulfillmentShort}</li>
         <li><Icon name="wallet" size={20} />Venmo or cash</li>
         {leadShort && <li><Icon name="clock" size={20} />{leadShort}</li>}
       </ul>
