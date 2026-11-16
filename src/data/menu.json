@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-10T21:33:09.518Z",
+  "updatedAt": "2026-11-16T06:51:16.435Z",
   "source": "live",
   "menu": [
     {
@@ -30,7 +30,7 @@
     },
     {
       "id": "smores",
-      "name": "Test",
+      "name": "Smore's",
       "price": 3.75,
       "unit": "each",
       "description": "Toasted marshmallow, milk chocolate and graham.",
